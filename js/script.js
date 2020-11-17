@@ -233,7 +233,7 @@ const creditCardCVVValidator = () => {
 const submit = document.querySelector('button');
 const form = document.querySelector('form');
 
-// Run validations once button is submitted
+// ---------Run validations once button is submitted---------
 form.addEventListener('submit', (e) => {
 
     nameValidator();
