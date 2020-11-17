@@ -154,7 +154,7 @@ nameErrorDiv.style.display = 'none';
 // Validate if the name field has at least 1 word character
 const nameValidator = () => {
     const nameValue = name.value;
-    return validator(name, /^\w+$/.test(nameValue), nameErrorDiv);
+    return validator(name, /^\w+\s?(\w+)?$/.test(nameValue), nameErrorDiv);
 }
 
 // ---------"Email" form validation---------
@@ -167,7 +167,7 @@ emailErrorDiv.style.display = 'none';
 // Validate if the email field follows a valid format
 const emailValidator = () => {
     const emailValue = email.value;
-    return validator(email, /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailValue), emailErrorDiv);
+    return validator(email, /^[^@]+@[^@.]+\.(com|net|org)$/i.test(emailValue), emailErrorDiv);
 }
 
 // ---------"Register for Activites" form validation---------
