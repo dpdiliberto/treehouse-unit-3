@@ -1,9 +1,11 @@
-// "Name" form section
+// ---------"Name" form section---------
+
 // Select first input element and make focus by default
 const name = document.querySelector('#name')
 name.focus();
 
-// "Job Role" form section
+// --------- "Job Role" form section ---------
+
 //Make "other-title" field hidden by default
 const otherTitleInput = document.querySelector('#other');
 const otherTitleLabel = otherTitleInput.previousElementSibling;
@@ -22,7 +24,7 @@ jobRole.addEventListener('change', e => {
     }
 });
 
-// "T-shirt Info" form section
+// --------- "T-shirt Info" form section ---------
 
 const designSelectElement = document.querySelector('#design');
 const colorSelectOptions = document.querySelector('#color');
@@ -42,7 +44,6 @@ document.querySelector('#color').appendChild(defaultShirtColor);
 defaultShirtColor.selected = true;
 
 // T-shirt color updates based on chosen design
-
 designSelectElement.addEventListener('change', e => {
     defaultShirtColor.remove();
     designDefault.remove();
@@ -58,7 +59,8 @@ designSelectElement.addEventListener('change', e => {
     }
 });
 
-// "Register for Activities" form section
+// ---------"Register for Activities" form section---------
+
 const checkboxes = document.querySelectorAll('.activities input');
 
 // Add cost label at bottom of activities section
@@ -99,7 +101,7 @@ document.querySelector('.activities').addEventListener('change', e => {
     costLabel.textContent = `Total: $${activitiesCost}`;
 });
 
-// "Payment Info" form section
+// ---------"Payment Info" form section---------
 
 const paymentElement = document.querySelector('#payment');
 const paymentOptionElements = document.querySelectorAll('#payment option');
@@ -128,7 +130,8 @@ paymentElement.addEventListener('change', e => {
     }
 })
 
-// Add form validations to each section
+// ---------Add form validations to each section---------
+
 // Function to set valid and invalid input states for element
 function validator (input, testCase, inputErrorDiv) {
     if (testCase) {
@@ -142,7 +145,7 @@ function validator (input, testCase, inputErrorDiv) {
     }
 }
 
-// "Name" form validation
+// ---------"Name" form validation---------
 // Add an error message and make it hidden by default
 name.insertAdjacentHTML('beforebegin', '<div id="required-name" class="required">Please enter valid name.</div>');
 const nameErrorDiv = document.querySelector('#required-name');
@@ -154,7 +157,7 @@ const nameValidator = () => {
     return validator(name, /^\w+$/.test(nameValue), nameErrorDiv);
 }
 
-// "Email" form validation
+// ---------"Email" form validation---------
 // Add an error message and make it hidden by default
 const email = document.querySelector('#mail');
 email.insertAdjacentHTML('beforebegin', '<div id="required-email" class="required">Please enter valid email address.</div>');
@@ -167,7 +170,7 @@ const emailValidator = () => {
     return validator(email, /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailValue), emailErrorDiv);
 }
 
-// "Register for Activites" form validation
+// ---------"Register for Activites" form validation---------
 // Add an error message and make it hidden by default
 let checkboxError = document.createElement('div');
 let activityLegend = document.querySelector('[type="checkbox"]').parentNode.parentNode;
@@ -196,7 +199,7 @@ const checkboxValidator = () => {
     }
 }
 
-// "Payment Info" form validation
+// ---------"Payment Info" form validation---------
 const ccNum = document.querySelector('#cc-num');
 const ccZIP = document.querySelector('#zip');
 const ccCVV = document.querySelector('#cvv');
