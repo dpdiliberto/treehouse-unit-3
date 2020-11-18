@@ -37,16 +37,14 @@ const heartJsShirts = document.querySelectorAll('.shirt-colors .heart-js');
 
 colorsSelectElements.forEach(element => element.remove());
 
-// Set default t-shirt color
-const defaultShirtColor = document.createElement('option');
-defaultShirtColor.textContent = 'Please select a T-Shirt theme';
-document.querySelector('#color').appendChild(defaultShirtColor);
-defaultShirtColor.selected = true;
+// Hide color options by default
+colorSelectOptions.parentNode.style.display = 'none';
+
 
 // T-shirt color updates based on chosen design
 designSelectElement.addEventListener('change', e => {
-    defaultShirtColor.remove();
     designDefault.remove();
+    colorSelectOptions.parentNode.style.display = 'block';
     colorsSelectElements.forEach(element => element.remove());
     let selection = e.target.value;
     if (selection === 'js-puns') {
@@ -133,7 +131,8 @@ paymentElement.addEventListener('change', e => {
 // ---------Add form validations to each section---------
 
 // Function to set valid and invalid input states for element
-function validator (input, testCase, inputErrorDiv) {
+function validator (input, testCase, inputErrorDiv, message) {
+    inputErrorDiv.textContent = message;
     if (testCase) {
         input.style.borderColor = '#6f9ddc';
         inputErrorDiv.style.display = 'none';
@@ -147,27 +146,27 @@ function validator (input, testCase, inputErrorDiv) {
 
 // ---------"Name" form validation---------
 // Add an error message and make it hidden by default
-name.insertAdjacentHTML('beforebegin', '<div id="required-name" class="required">Please enter valid name.</div>');
+name.insertAdjacentHTML('beforebegin', '<div id="required-name" class="required"></div>');
 const nameErrorDiv = document.querySelector('#required-name');
 nameErrorDiv.style.display = 'none';
 
 // Validate if the name field has at least 1 word character
 const nameValidator = () => {
     const nameValue = name.value;
-    return validator(name, /^\w+\s?(\w+)?$/.test(nameValue), nameErrorDiv);
+    return validator(name, /^\w+\s?(\w+)?$/.test(nameValue), nameErrorDiv, 'Please enter valid name.');
 }
 
 // ---------"Email" form validation---------
 // Add an error message and make it hidden by default
 const email = document.querySelector('#mail');
-email.insertAdjacentHTML('beforebegin', '<div id="required-email" class="required">Please enter valid email address.</div>');
+email.insertAdjacentHTML('beforebegin', '<div id="required-email" class="required"></div>');
 const emailErrorDiv = document.querySelector('#required-email');
 emailErrorDiv.style.display = 'none';
 
 // Validate if the email field follows a valid format
 const emailValidator = () => {
     const emailValue = email.value;
-    return validator(email, /^[^@]+@[^@.]+\.(com|net|org)$/i.test(emailValue), emailErrorDiv);
+    return validator(email, /^[^@]+@[^@.]+\.(com|net|org)$/i.test(emailValue), emailErrorDiv, 'Please enter valid email address.');
 }
 
 // ---------"Register for Activites" form validation---------
@@ -207,7 +206,7 @@ const ccCVV = document.querySelector('#cvv');
 const creditCardInfo = document.querySelector('#credit-card');
 
 // Create block of divs to contain the 3 possible payment error messages (credit card number, ZIP, CVV) and make invisible by default
-creditCardInfo.insertAdjacentHTML('beforebegin', '<div id="required-cc-num" class="required">- Please enter valid 13 to 16 digit credit card number.</div><div id="required-cc-zip" class="required">- Please enter valid 5 digit zip code.</div> <div id="required-cc-cvv" class="required">- Please enter valid 3 digit CVV.</div>');
+creditCardInfo.insertAdjacentHTML('beforebegin', '<div id="required-cc-num" class="required"></div><div id="required-cc-zip" class="required"></div> <div id="required-cc-cvv" class="required"></div>');
 const ccNumDiv = document.querySelector('#required-cc-num');
 const ccZIPDiv = document.querySelector('#required-cc-zip');
 const ccCVVDiv = document.querySelector('#required-cc-cvv');
@@ -215,32 +214,59 @@ ccNumDiv.style.display = 'none';
 ccZIPDiv.style.display = 'none';
 ccCVVDiv.style.display = 'none';
 
+// Credit card number validator that tests if the credit card field is blank
+const creditCardNumBlankValidator = () => {
+    ccNumDiv.textContent = '- Please enter a credit card number.';
+    if (/^\s*$/.test(ccNum.value)) {
+        ccNum.style.borderColor = 'red';
+        ccNumDiv.style.display = 'block';
+        return true;
+    } else {
+        ccNum.style.borderColor = '#6f9ddc';
+        ccNumDiv.style.display = 'none';
+        return false;
+    }
+}
+
 // Credit card number validator that tests that there are 13 to 16 digit characters inputted
 const creditCardNumValidator = () => {
-    return validator(ccNum, /^\d{13,16}$/.test(ccNum.value), ccNumDiv);
+    return validator(ccNum, /^\d{13,16}$/.test(ccNum.value), ccNumDiv, '- Please enter valid 13 to 16 digit credit card number.');
 }
 
 // Credit card zip validator that tests that there are 5 digit characters inputted
 const creditCardZipValidator = () => {
-    return validator(ccZIP, /^\d{5}$/.test(ccZIP.value), ccZIPDiv);
+    return validator(ccZIP, /^\d{5}$/.test(ccZIP.value), ccZIPDiv, '- Please enter valid 5 digit zip code.');
 }
 
 // Credit card CVV validator that tests that there are 3 digit characters inputted
 const creditCardCVVValidator = () => {
-    return validator(ccCVV, /^\d{3}$/.test(ccCVV.value), ccCVVDiv);
+    return validator(ccCVV, /^\d{3}$/.test(ccCVV.value), ccCVVDiv, '- Please enter valid 3 digit CVV.');
 }
 
 const submit = document.querySelector('button');
 const form = document.querySelector('form');
 
-// ---------Run validations once button is submitted---------
+// ---------Run validations---------
+// Runs real-time validations on the "Email" field
+email.addEventListener('keyup', (e) => {
+    const validated = emailValidator();
+    if (validated) {
+        emailErrorDiv.style.display = 'none';
+    } else {
+        emailErrorDiv.style.display = 'block';
+    }
+})
+
+// Runs validations on each field when the button is submitted
 form.addEventListener('submit', (e) => {
 
     nameValidator();
     emailValidator();
     checkboxValidator();
     if (selectedPayment === 'credit-card') {
-        creditCardNumValidator();
+        if (!creditCardNumBlankValidator()) {
+            creditCardNumValidator();
+        }
         creditCardZipValidator();
         creditCardCVVValidator();
     }
