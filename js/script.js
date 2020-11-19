@@ -4,6 +4,19 @@
 const name = document.querySelector('#name')
 name.focus();
 
+// Add an error message and make it hidden by default
+name.insertAdjacentHTML('beforebegin', '<div id="required-name" class="required"></div>');
+const nameErrorDiv = document.querySelector('#required-name');
+nameErrorDiv.style.display = 'none';
+
+// --------- "Email" form section ---------
+
+// Add an error message and make it hidden by default
+const email = document.querySelector('#mail');
+email.insertAdjacentHTML('beforebegin', '<div id="required-email" class="required"></div>');
+const emailErrorDiv = document.querySelector('#required-email');
+emailErrorDiv.style.display = 'none';
+
 // --------- "Job Role" form section ---------
 
 //Make "other-title" field hidden by default
@@ -67,6 +80,13 @@ costLabel.style.display = 'none';
 document.querySelector('.activities').appendChild(costLabel);
 let activitiesCost = 0;
 
+// Add an error message and make it hidden by default
+let checkboxError = document.createElement('div');
+let activityLegend = document.querySelector('[type="checkbox"]').parentNode.parentNode;
+activityLegend.insertAdjacentHTML('afterbegin', '<label id="required-activity" class="required">Please select at least one activity.</label>');
+const activityErrorMessage = document.querySelector('#required-activity')
+activityErrorMessage.style.display = 'none';
+
 // Add event listener to "Activities" section
 document.querySelector('.activities').addEventListener('change', e => {
     const clicked = e.target;
@@ -106,7 +126,8 @@ const paymentOptionElements = document.querySelectorAll('#payment option');
 const selectPaymentElement = document.querySelector('[value="select method"]');
 
 // Disable ability to select "Select Payment Method", set default payment to "credit card", and hide other payment option divs
-selectPaymentElement.hidden = true;
+//selectPaymentElement.hidden = true;
+selectPaymentElement.remove();
 
 let selectedPayment = 'credit-card';
 const payPalDiv = document.querySelector('#paypal');
@@ -114,6 +135,28 @@ const bitcoinDiv = document.querySelector('#bitcoin');
 
 payPalDiv.style.display = 'none';
 bitcoinDiv.style.display = 'none';
+
+const ccNum = document.querySelector('#cc-num');
+const ccZIP = document.querySelector('#zip');
+const ccCVV = document.querySelector('#cvv');
+
+const creditCardInfo = document.querySelector('#credit-card');
+
+// Create block of divs to contain the 3 possible payment error messages (credit card number, ZIP, CVV) and make invisible by default
+creditCardInfo.insertAdjacentHTML('beforebegin', '<div id="required-cc-num" class="required"></div><div id="required-cc-zip" class="required"></div> <div id="required-cc-cvv" class="required"></div>');
+const ccNumDiv = document.querySelector('#required-cc-num');
+const ccZIPDiv = document.querySelector('#required-cc-zip');
+const ccCVVDiv = document.querySelector('#required-cc-cvv');
+
+function resetCCError() { 
+    ccNumDiv.style.display = 'none';
+    ccZIPDiv.style.display = 'none';
+    ccCVVDiv.style.display = 'none';
+    ccNum.style.borderColor = '#6f9ddc';
+    ccZIP.style.borderColor = '#6f9ddc';
+    ccCVV.style.borderColor = '#6f9ddc';
+}
+resetCCError();
 
 // Add event listener to display selected payment option
 paymentElement.addEventListener('change', e => {
@@ -125,6 +168,11 @@ paymentElement.addEventListener('change', e => {
         if (selectedPayment === paymentOptionElements[i].value) {
                 document.querySelector(`.${selectedPayment}`).style.display = 'block';
         }
+    }
+
+    // If user switches from "credit card" to "paypal", reset error state
+    if (selectedPayment!=='credit-card') {
+        resetCCError();
     }
 })
 
@@ -145,10 +193,6 @@ function validator (input, testCase, inputErrorDiv, message) {
 }
 
 // ---------"Name" form validation---------
-// Add an error message and make it hidden by default
-name.insertAdjacentHTML('beforebegin', '<div id="required-name" class="required"></div>');
-const nameErrorDiv = document.querySelector('#required-name');
-nameErrorDiv.style.display = 'none';
 
 // Validate if the name field has at least 1 word character
 const nameValidator = () => {
@@ -157,11 +201,6 @@ const nameValidator = () => {
 }
 
 // ---------"Email" form validation---------
-// Add an error message and make it hidden by default
-const email = document.querySelector('#mail');
-email.insertAdjacentHTML('beforebegin', '<div id="required-email" class="required"></div>');
-const emailErrorDiv = document.querySelector('#required-email');
-emailErrorDiv.style.display = 'none';
 
 // Validate if the email field follows a valid format
 const emailValidator = () => {
@@ -170,12 +209,6 @@ const emailValidator = () => {
 }
 
 // ---------"Register for Activites" form validation---------
-// Add an error message and make it hidden by default
-let checkboxError = document.createElement('div');
-let activityLegend = document.querySelector('[type="checkbox"]').parentNode.parentNode;
-activityLegend.insertAdjacentHTML('afterbegin', '<label id="required-activity" class="required">Please select at least one activity.</label>');
-const activityErrorMessage = document.querySelector('#required-activity')
-activityErrorMessage.style.display = 'none';
 
 // Validate the activities field
 const checkboxValidator = () => {
@@ -199,20 +232,6 @@ const checkboxValidator = () => {
 }
 
 // ---------"Payment Info" form validation---------
-const ccNum = document.querySelector('#cc-num');
-const ccZIP = document.querySelector('#zip');
-const ccCVV = document.querySelector('#cvv');
-
-const creditCardInfo = document.querySelector('#credit-card');
-
-// Create block of divs to contain the 3 possible payment error messages (credit card number, ZIP, CVV) and make invisible by default
-creditCardInfo.insertAdjacentHTML('beforebegin', '<div id="required-cc-num" class="required"></div><div id="required-cc-zip" class="required"></div> <div id="required-cc-cvv" class="required"></div>');
-const ccNumDiv = document.querySelector('#required-cc-num');
-const ccZIPDiv = document.querySelector('#required-cc-zip');
-const ccCVVDiv = document.querySelector('#required-cc-cvv');
-ccNumDiv.style.display = 'none';
-ccZIPDiv.style.display = 'none';
-ccCVVDiv.style.display = 'none';
 
 // Credit card number validator that tests if the credit card field is blank
 const creditCardNumBlankValidator = () => {
@@ -269,14 +288,16 @@ form.addEventListener('submit', (e) => {
         }
         creditCardZipValidator();
         creditCardCVVValidator();
+    } else {
+        resetCCError();
     }
 
    // Prevent form from submitting if any input is invalid  
     if (selectedPayment === 'credit-card') {
-        if (!nameValidator() || !emailValidator() || !checkboxValidator() || !creditCardNumValidator() || !creditCardZipValidator() || !creditCardCVVValidator()) {
-            e.preventDefault();
-        } else if (!nameValidator() || !emailValidator() || !checkboxValidator()) {
+        if (!nameValidator() || !emailValidator() || !checkboxValidator() || creditCardNumBlankValidator() || !creditCardNumValidator() || !creditCardZipValidator() || !creditCardCVVValidator()) {
             e.preventDefault();
         }
+    } else if (!nameValidator() || !emailValidator() || !checkboxValidator()) {
+        e.preventDefault();
     }
 });
