@@ -126,7 +126,6 @@ const paymentOptionElements = document.querySelectorAll('#payment option');
 const selectPaymentElement = document.querySelector('[value="select method"]');
 
 // Disable ability to select "Select Payment Method", set default payment to "credit card", and hide other payment option divs
-//selectPaymentElement.hidden = true;
 selectPaymentElement.remove();
 
 let selectedPayment = 'credit-card';
@@ -266,6 +265,7 @@ const submit = document.querySelector('button');
 const form = document.querySelector('form');
 
 // ---------Run validations---------
+
 // Runs real-time validations on the "Email" field
 email.addEventListener('keyup', (e) => {
     const validated = emailValidator();
